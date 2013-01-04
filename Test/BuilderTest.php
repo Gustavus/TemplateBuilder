@@ -27,13 +27,13 @@ class BuilderTest extends Test
    * @var array
    */
   private $builderProperties = array(
-    'title' => 'arst',
-    'subTitle' => 'subtitle',
-    'focusBox' => '<p>FocusBox</p>',
-    'stylesheets' => '<style>some css here</style>',
-    'javascripts' => '<script>Some js here</script>',
+    'title'           => 'arst',
+    'subTitle'        => 'subtitle',
+    'focusBox'        => '<p>FocusBox</p>',
+    'stylesheets'     => '<style>some css here</style>',
+    'javascripts'     => '<script>Some js here</script>',
     'localNavigation' => [['text' => 'testUrl', 'url' => 'someUrl']],
-    'content' => '<p>some random content</p>',
+    'content'         => '<p>some random content</p>',
   );
 
   /**
