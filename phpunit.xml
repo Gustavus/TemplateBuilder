@@ -1,0 +1,12 @@
+<phpunit bootstrap="/cis/lib/Gustavus/TemplateBuilder/bootstrap.php">
+  <testsuites>
+    <testsuite name="Template Builter">
+      <directory suffix="Test.php">/cis/lib/Gustavus/TemplateBuilder/Tests/</directory>
+    </testsuite>
+  </testsuites>
+
+  <php>
+    <ini name="xdebug.collect_params" value="0"/>
+    <server name="DOCUMENT_ROOT" value="/cis/www/"/>
+  </php>
+</phpunit>
