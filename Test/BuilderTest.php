@@ -8,7 +8,6 @@ namespace Gustavus\TemplateBuilder;
 
 use Gustavus\Test\Test,
   Gustavus\Test\TestObject,
-  Gustavus\Test\TestObjectMock,
   Gustavus\TemplateBuilder\Builder;
 
 /**
