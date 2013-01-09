@@ -8,6 +8,7 @@ namespace Gustavus\TemplateBuilder;
 
 use Gustavus\Test\Test,
   Gustavus\Test\TestObject,
+  Gustavus\Test\TestObjectMock,
   Gustavus\TemplateBuilder\Builder;
 
 /**
@@ -112,9 +113,50 @@ class BuilderTest extends Test
   /**
    * @test
    */
+  public function renderLocalNavigationEmpty()
+  {
+    $this->builder->setLocalNavigation([]);
+    $this->assertNotEmpty($this->builder->renderLocalNavigation());
+  }
+
+  /**
+   * @test
+   */
   public function renderLocalNavigation()
   {
     $expected = \Gustavus\LocalNavigation\ItemFactory::getItems($this->builderProperties['localNavigation'])->render();
     $this->assertSame($expected, $this->builder->renderLocalNavigation());
+  }
+
+  /**
+   * @test
+   */
+  public function findFile()
+  {
+    $this->assertSame('/cis/www/site_nav.php', $this->builder->findFile('site_nav.php'));
+  }
+
+  /**
+   * @test
+   */
+  public function findFileFound()
+  {
+    $this->assertSame('site_nav_test.php', $this->builder->findFile('site_nav_test.php'));
+  }
+
+  /**
+   * @test
+   */
+  public function findLocalNavigationFile()
+  {
+    $this->assertSame('/cis/www/site_nav.php', $this->builder->findLocalNavigationFile('site_nav.php'));
+  }
+
+  /**
+   * @test
+   */
+  public function autoLoadLocalNavigation()
+  {
+    $this->assertNotEmpty($this->builder->autoLoadLocalNavigation());
   }
 }

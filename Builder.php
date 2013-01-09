@@ -12,7 +12,8 @@ require_once 'gatekeeper/gatekeeper.class.php';
 
 use TemplatePageRequest,
   Gustavus\TwigFactory\TwigFactory,
-  Gustavus\LocalNavigation\ItemFactory;
+  Gustavus\LocalNavigation\ItemFactory,
+  Gustavus\Utility\File;
 
 /**
  * Class to build the template
@@ -220,11 +221,50 @@ class Builder
    */
   protected function renderLocalNavigation()
   {
-    if (is_array($this->getLocalNavigation())) {
-      return ItemFactory::getItems($this->getLocalNavigation())->render();
+    if (is_array($this->getLocalNavigation()) && !empty($this->localNavigation)) {
+      return ItemFactory::getItems($this->localNavigation)->render();
     } else {
-      return $this->getLocalNavigation();
+      if (empty($this->localNavigation)) {
+        return $this->autoLoadLocalNavigation();
+      } else {
+        return $this->getLocalNavigation();
+      }
     }
+  }
+
+  /**
+   * @return string Local navigation HTML
+   */
+  private function autoLoadLocalNavigation()
+  {
+    return (new File($this->findLocalNavigationFile()))->loadAndEvaluate();
+  }
+
+  /**
+   * @return string Path of local navigation file
+   */
+  private function findLocalNavigationFile()
+  {
+    return $this->findFile('site_nav.php');
+  }
+
+  /**
+   * @param string $filename
+   * @param integer $levels Maximum number of levels higher to check
+   * @return string Path of file
+   */
+  private function findFile($filename, $levels = 5)
+  {
+    assert('is_int($levels)');
+
+    for ($i = 0; $i < $levels; ++$i) {
+      $check  = str_repeat('../', $i) . $filename;
+      if (file_exists($check)) {
+        return $check;
+      }
+    }
+    // default to the homepage's siteNav if nothing is found
+    return '/cis/www/site_nav.php';
   }
 
   /**
