@@ -1,7 +1,7 @@
 <phpunit bootstrap="/cis/lib/Gustavus/TemplateBuilder/bootstrap.php">
   <testsuites>
     <testsuite name="Template Builter">
-      <directory suffix="Test.php">/cis/lib/Gustavus/TemplateBuilder/Tests/</directory>
+      <directory suffix="Test.php">/cis/lib/Gustavus/TemplateBuilder/Test/</directory>
     </testsuite>
   </testsuites>
 

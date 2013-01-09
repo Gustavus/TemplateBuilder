@@ -254,7 +254,7 @@ class Builder
    *
    * @return string
    */
-  public function renderBodyInTemplate()
+  public function render()
   {
     // Set up template preferences
     global $templatePreferences;
