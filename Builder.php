@@ -274,6 +274,10 @@ class Builder
    */
   private function getContent()
   {
+    if (ob_get_level()) {
+      // this either means that a warning or notice was thrown. Lets throw it above the content so we don't lose it.
+      return ob_get_clean() . $this->content;
+    }
     return $this->content;
   }
 
