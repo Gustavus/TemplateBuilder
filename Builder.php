@@ -54,6 +54,11 @@ class Builder
   private $localNavigation = [];
 
   /**
+   * @var array
+   */
+  private $breadCrumbs = [];
+
+  /**
    * @var string
    */
   private $content = '';
@@ -294,12 +299,52 @@ class Builder
   }
 
   /**
+   * Gets the breadCrumbs for the page.
+   *
+   * @return array the breadCrumbs on the page
+   */
+  private function getBreadCrumbs()
+  {
+    return $this->breadCrumbs;
+  }
+
+  /**
+   * Sets the breadCrumbs
+   *
+   * @param array $breadCrumbs
+   *        array of arrays of ['url' => url, 'text' => text]
+   * @return $this
+   */
+  private function setBreadCrumbs(array $breadCrumbs)
+  {
+    $this->breadCrumbs = $breadCrumbs;
+    return $this;
+  }
+
+  /**
+   * Translates bread crumbs into a format the template understands.
+   */
+  private function setUpBreadCrumbs()
+  {
+    $translatedCrumbs = [];
+    foreach ($this->breadCrumbs as $crumb) {
+      // translate each crumb into something the template understands
+      $translatedCrumbs[] = [
+        'attributes' => sprintf('href="%s"', $crumb['url']),
+        'value'      => $crumb['text'],
+      ];
+    }
+    $this->templatePreferences = array_merge($this->templatePreferences, array('breadcrumbTrailArray' => $translatedCrumbs));
+  }
+
+  /**
    * Renders a page wrapped in the Gustavus template.
    *
    * @return string
    */
   public function render()
   {
+    $this->setUpBreadCrumbs();
     // Set up template preferences
     global $templatePreferences;
     $templatePreferences = $this->templatePreferences;
