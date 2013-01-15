@@ -323,6 +323,8 @@ class Builder
 
   /**
    * Translates bread crumbs into a format the template understands.
+   *
+   * @return  void
    */
   private function setUpBreadCrumbs()
   {
