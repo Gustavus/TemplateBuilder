@@ -350,6 +350,7 @@ class Builder
     // Set up template preferences
     global $templatePreferences;
     $templatePreferences = $this->templatePreferences;
+    TemplatePageRequest::initExtremeMaintenance();
 
     $bodyContent = TwigFactory::renderTwigFilesystemTemplate(__DIR__ . '/views/templateBody.html.twig', array(
         'title'           => $this->getTitle(),
