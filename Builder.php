@@ -13,7 +13,8 @@ require_once 'gatekeeper/gatekeeper.class.php';
 use TemplatePageRequest,
   Gustavus\TwigFactory\TwigFactory,
   Gustavus\LocalNavigation\ItemFactory,
-  Gustavus\Utility\File;
+  Gustavus\Utility\File,
+  Gustavus\Extensibility\Filters;
 
 /**
  * Class to build the template
@@ -57,6 +58,11 @@ class Builder
    * @var array
    */
   private $breadCrumbs = [];
+
+  /**
+   * @var array
+   */
+  private $breadCrumbAdditions = [];
 
   /**
    * @var string
@@ -322,6 +328,61 @@ class Builder
   }
 
   /**
+   * Sets the breadCrumbAdditions to be added to the breadCrumbs
+   *
+   * @param array $breadCrumbAdditions
+   *        array of arrays of ['url' => url, 'text' => text]
+   * @return $this
+   */
+  private function setBreadCrumbAdditions(array $breadCrumbAdditions)
+  {
+    $this->breadCrumbAdditions = $breadCrumbAdditions;
+    return $this;
+  }
+
+  /**
+   * Gets the breadCrumbAdditions for the page.
+   *
+   * @return array the breadCrumbAdditionss on the page
+   */
+  private function getBreadCrumbAdditions()
+  {
+    return $this->breadCrumbAdditions;
+  }
+
+  /**
+   * Builds a string to append onto the bread crumbs
+   *
+   * @return string
+   */
+  private function buildBreadCrumbAdditions()
+  {
+    $builtCrumbs = [];
+    foreach ($this->breadCrumbAdditions as $crumb) {
+      $builtCrumbs[] = sprintf('<a href="%s">%s</a>',
+          $crumb['url'],
+          $crumb['text']
+      );
+    }
+    return (!empty($builtCrumbs)) ? implode(' / ', $builtCrumbs) . ' / ' : '';
+  }
+
+  /**
+   * Appends the additional bread crumbs onto the already existing bread crumbs
+   *
+   * @return void
+   */
+  private function appendAdditionalBreadCrumbs()
+  {
+    Filters::add('breadcrumbTrail',
+        function($content)
+        {
+          return $content . $this->buildBreadCrumbAdditions();
+        }
+    );
+  }
+
+  /**
    * Translates bread crumbs into a format the template understands.
    *
    * @return  void
@@ -337,6 +398,7 @@ class Builder
       ];
     }
     $this->templatePreferences = array_merge($this->templatePreferences, array('breadcrumbTrailArray' => $translatedCrumbs));
+    $this->appendAdditionalBreadCrumbs();
   }
 
   /**

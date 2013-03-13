@@ -158,4 +158,26 @@ class BuilderTest extends Test
   {
     $this->assertNotEmpty($this->builder->autoLoadLocalNavigation());
   }
+
+  /**
+   * @test
+   */
+  public function setAndGetBreadCrumbAdditions()
+  {
+    $crumbs = [['url' => 'some url', 'text' => 'some text']];
+    $this->builder->setBreadCrumbAdditions($crumbs);
+
+    $this->assertSame($crumbs, $this->builder->getBreadCrumbAdditions());
+  }
+
+  /**
+   * @test
+   */
+  public function buildBreadCrumbAdditions()
+  {
+    $crumbs = [['url' => 'some url', 'text' => 'some text']];
+    $this->builder->setBreadCrumbAdditions($crumbs);
+
+    $this->assertSame('<a href="some url">some text</a> / ', $this->builder->buildBreadCrumbAdditions());
+  }
 }
