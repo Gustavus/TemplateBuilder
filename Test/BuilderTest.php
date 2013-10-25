@@ -2,6 +2,7 @@
 /**
  * @package TemplateBuilder
  * @subpackage Test
+ * @author  Billy Visto
  */
 
 namespace Gustavus\TemplateBuilder;
@@ -11,8 +12,11 @@ use Gustavus\Test\Test,
   Gustavus\TemplateBuilder\Builder;
 
 /**
+ * Builder Test
+ *
  * @package TemplateBuilder
  * @subpackage Test
+ * @author  Billy Visto
  */
 class BuilderTest extends Test
 {
