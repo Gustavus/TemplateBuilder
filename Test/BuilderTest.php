@@ -180,4 +180,17 @@ class BuilderTest extends Test
 
     $this->assertSame('<a href="some url">some text</a> / ', $this->builder->buildBreadCrumbAdditions());
   }
+
+  /**
+   * @test
+   */
+  public function templatePreferences()
+  {
+    $this->assertSame(true, $this->builder->templatePreferences['localNavigation']);
+    $this->builderProperties['templatePreferences'] = ['localNavigation' => false];
+    $this->setUp();
+
+    $expected = ['localNavigation' => false, 'auxBox' => false];
+    $this->assertSame($expected, $this->builder->templatePreferences);
+  }
 }

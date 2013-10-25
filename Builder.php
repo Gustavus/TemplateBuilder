@@ -79,11 +79,16 @@ class Builder
    * Constructs the object with the args specified
    *
    * @param array $args keyed by page part
-   * @param  array $templatePreferences templatePreferences to add to the global template preferences
+   * @param  array $templatePreferences templatePreferences to add to the global template preferences.
+   *   <strong>Note:</strong> This will override any templatePreferences specified in $args
    * @return  void
    */
   public function __construct($args = array(), $templatePreferences = array())
   {
+    if (isset($args['templatePreferences'])) {
+      $templatePreferences = array_merge($args['templatePreferences'], $templatePreferences);
+      unset($args['templatePreferences']);
+    }
     $this->templatePreferences = array_merge($this->templatePreferences, $templatePreferences);
     foreach ($args as $key => $value) {
       $function = 'set' . ucfirst($key);
