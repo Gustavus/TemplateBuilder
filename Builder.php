@@ -70,6 +70,11 @@ class Builder
   private $content = '';
 
   /**
+   * @var string
+   */
+  private $messages = '';
+
+  /**
    * Preferences to set in the template
    * @var array
    */
@@ -310,6 +315,28 @@ class Builder
   }
 
   /**
+   * Gets the messages for the page.
+   *
+   * @return string the messages on the page
+   */
+  private function getMessages()
+  {
+    return $this->messages;
+  }
+
+  /**
+   * Sets the messages
+   *
+   * @param string $messages
+   * @return $this
+   */
+  private function setMessages($messages)
+  {
+    $this->messages = $messages;
+    return $this;
+  }
+
+  /**
    * Gets the breadCrumbs for the page.
    *
    * @return array the breadCrumbs on the page
@@ -418,6 +445,13 @@ class Builder
     global $templatePreferences;
     $templatePreferences = $this->templatePreferences;
     TemplatePageRequest::initExtremeMaintenance();
+
+    Filters::add('messages',
+        function($content)
+        {
+          return $content . $this->getMessages();
+        }
+    );
 
     $bodyContent = TwigFactory::renderTwigFilesystemTemplate(__DIR__ . '/views/templateBody.html.twig', array(
         'title'           => $this->getTitle(),
