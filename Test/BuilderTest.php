@@ -134,33 +134,23 @@ class BuilderTest extends Test
   /**
    * @test
    */
-  public function findFile()
-  {
-    $this->assertSame('/cis/www/site_nav.php', $this->builder->findFile('site_nav.php'));
-  }
-
-  /**
-   * @test
-   */
-  public function findFileFound()
-  {
-    $this->assertSame('site_nav_test.php', $this->builder->findFile('site_nav_test.php'));
-  }
-
-  /**
-   * @test
-   */
-  public function findLocalNavigationFile()
-  {
-    $this->assertSame('/cis/www/site_nav.php', $this->builder->findLocalNavigationFile('site_nav.php'));
-  }
-
-  /**
-   * @test
-   */
   public function autoLoadLocalNavigation()
   {
-    $this->assertNotEmpty($this->builder->autoLoadLocalNavigation());
+    $_SERVER['SCRIPT_FILENAME'] = __FILE__;
+    $result = $this->builder->autoLoadLocalNavigation();
+    $this->assertNotEmpty($result);
+    $this->assertContains('test site nav', $result);
+  }
+
+  /**
+   * @test
+   */
+  public function autoLoadLocalNavigationFallbackToGlobal()
+  {
+    $_SERVER['SCRIPT_FILENAME'] = str_replace('/Test', '/', __DIR__);
+    $result = $this->builder->autoLoadLocalNavigation();
+    $this->assertNotEmpty($result);
+    $this->assertNotContains('test site nav', $result);
   }
 
   /**

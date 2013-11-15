@@ -254,38 +254,13 @@ class Builder
   }
 
   /**
+   * Searches for a local navigation file to load.
+   *
    * @return string Local navigation HTML
    */
   private function autoLoadLocalNavigation()
   {
-    return (new File($this->findLocalNavigationFile()))->loadAndEvaluate();
-  }
-
-  /**
-   * @return string Path of local navigation file
-   */
-  private function findLocalNavigationFile()
-  {
-    return $this->findFile('site_nav.php');
-  }
-
-  /**
-   * @param string $filename
-   * @param integer $levels Maximum number of levels higher to check
-   * @return string Path of file
-   */
-  private function findFile($filename, $levels = 5)
-  {
-    assert('is_int($levels)');
-
-    for ($i = 0; $i < $levels; ++$i) {
-      $check  = str_repeat('../', $i) . $filename;
-      if (file_exists($check)) {
-        return $check;
-      }
-    }
-    // default to the homepage's siteNav if nothing is found
-    return '/cis/www/site_nav.php';
+    return (new File('site_nav.php'))->find(null, '/cis/www/site_nav.php', 5)->loadAndEvaluate();
   }
 
   /**
