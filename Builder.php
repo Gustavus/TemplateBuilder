@@ -47,6 +47,11 @@ class Builder
   /**
    * @var string
    */
+  private $head = '';
+
+  /**
+   * @var string
+   */
   private $javascripts = '';
 
   /**
@@ -75,6 +80,11 @@ class Builder
   private $messages = '';
 
   /**
+   * @var string
+   */
+  private $banners = '';
+
+  /**
    * Preferences to set in the template
    * @var array
    */
@@ -88,7 +98,7 @@ class Builder
    *   <strong>Note:</strong> This will override any templatePreferences specified in $args
    * @return  void
    */
-  public function __construct($args = array(), $templatePreferences = array())
+  public function __construct(array $args = array(), $templatePreferences = array())
   {
     if (isset($args['templatePreferences'])) {
       $templatePreferences = array_merge($args['templatePreferences'], $templatePreferences);
@@ -188,6 +198,28 @@ class Builder
   private function setStylesheets($stylesheets)
   {
     $this->stylesheets = $stylesheets;
+    return $this;
+  }
+
+  /**
+   * Gets the head HTML on the page.
+   *
+   * @return string the head HTML on the page
+   */
+  private function getHead()
+  {
+    return $this->head;
+  }
+
+  /**
+   * Sets the head HTML on the page.
+   *
+   * @param string $head the new head HTML on the page
+   * @return $this to enable method chaining
+   */
+  private function setHead($head)
+  {
+    $this->head = $head;
     return $this;
   }
 
@@ -312,6 +344,28 @@ class Builder
   }
 
   /**
+   * Gets the banners for the page.
+   *
+   * @return string the banners on the page
+   */
+  private function getBanners()
+  {
+    return $this->banners;
+  }
+
+  /**
+   * Sets the banners
+   *
+   * @param string $banners
+   * @return $this
+   */
+  private function setBanners($banners)
+  {
+    $this->banners = $banners;
+    return $this;
+  }
+
+  /**
    * Gets the breadCrumbs for the page.
    *
    * @return array the breadCrumbs on the page
@@ -404,7 +458,7 @@ class Builder
         'value'      => $crumb['text'],
       ];
     }
-    $this->templatePreferences = array_merge($this->templatePreferences, array('breadcrumbTrailArray' => $translatedCrumbs));
+    $this->templatePreferences = array_merge(array('breadcrumbTrailArray' => $translatedCrumbs), $this->templatePreferences);
     $this->appendAdditionalBreadCrumbs();
   }
 
@@ -427,6 +481,12 @@ class Builder
           return $content . $this->getMessages();
         }
     );
+    Filters::add('banner',
+        function($content)
+        {
+          return $content . $this->getBanners();
+        }
+    );
 
     $bodyContent = TwigFactory::renderTwigFilesystemTemplate(__DIR__ . '/views/templateBody.html.twig', array(
         'title'           => $this->getTitle(),
@@ -435,6 +495,7 @@ class Builder
         'localNavigation' => $this->renderLocalNavigation(),
         'focusBox'        => $this->getFocusBox(),
         'stylesheets'     => $this->getStylesheets(),
+        'head'            => $this->getHead(),
         'javascripts'     => $this->getJavascripts(),
       )
     );
