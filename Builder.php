@@ -5,6 +5,12 @@
  */
 namespace Gustavus\TemplateBuilder;
 
+if (!defined('GUSTAVUS_START_TEMPLATE')) {
+  // we don't want to template to start.
+  // including template/request.class.php starts extreme maintenance mode and debugging right away
+  define('GUSTAVUS_START_TEMPLATE', false);
+}
+
 require_once 'template/request.class.php';
 //Gatekeeper needs to be included after the request class
 //because the request class sets a constant that gatekeeper needs.
@@ -473,7 +479,6 @@ class Builder
     // Set up template preferences
     global $templatePreferences;
     $templatePreferences = $this->templatePreferences;
-    TemplatePageRequest::initExtremeMaintenance();
 
     Filters::add('messages',
         function($content)
