@@ -99,6 +99,23 @@ class Builder
   /**
    * Constructs the object with the args specified
    *
+   * Supported properties for $args:
+   * <ul>
+   *   <li>title = {string} Page title</li>
+   *   <li>subtitle = {string} Page sub title</li>
+   *   <li>content = {string} Page content</li>
+   *   <li>focusBox = {string} Focus box content</li>
+   *   <li>stylesheets = {string} Stylesheets to add to the head</li>
+   *   <li>javascripts = {string} Javascripts to add to the head</li>
+   *   <li>head = {string} Contents to add to the head</li>
+   *   <li>localNavigation = {string|array} <a href="https://beta.gac.edu/docs/php/class-Gustavus.LocalNavigation.ItemFactory.html#_getItems">Configuration sent to LocalNavigation\Items::getItems</a> or html.</li>
+   *   <li>breadCrumbs = {array} Array of arrays of crumb configuration with 'url' and 'text' as keys.</li>
+   *   <li>breadCrumbAdditions = {array} Array of arrays of additional bread crumbs to add.</li>
+   *   <li>messages = {string} Messsages to add to the bottom message of the page.</li>
+   *   <li>banners = {string} HTML to add to the banners portion of the template</li>
+   *   <li>templatePreferences = {array} Array of preferences to append to our default preferences</li>
+   * </ul>
+   *
    * @param array $args keyed by page part
    * @param  array $templatePreferences templatePreferences to add to the global template preferences.
    *   <strong>Note:</strong> This will override any templatePreferences specified in $args
