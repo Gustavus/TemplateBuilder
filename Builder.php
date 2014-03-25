@@ -327,7 +327,7 @@ class Builder
   {
     if (ob_get_level()) {
       // this either means that a warning, a notice, or any other output was thrown to the output buffer. Lets throw it above the content so we don't lose it.
-      return ob_get_contents() . $this->content;
+      return ob_get_clean() . $this->content;
     }
     return $this->content;
   }
