@@ -327,9 +327,15 @@ class Builder
   {
     if (ob_get_level()) {
       // this either means that a warning, a notice, or any other output was thrown to the output buffer. Lets throw it above the content so we don't lose it.
-      $this->content = ob_get_clean() . $this->content;
-      // restart a buffer since one has been started somewhere.
-      ob_start();
+      if (PHP_SAPI === 'cli') {
+        // we don't want to wipe the buffer if from the command line.
+        $this->content = ob_get_contents() . $this->content;
+      } else {
+        // we do here though, otherwise this output will be duplicated
+        $this->content = ob_get_clean() . $this->content;
+        // restart a buffer since one has been started somewhere.
+        ob_start();
+      }
       return $this->content;
     }
     return $this->content;
