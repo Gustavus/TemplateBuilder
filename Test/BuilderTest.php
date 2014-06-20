@@ -187,4 +187,30 @@ class BuilderTest extends Test
     $expected = ['localNavigation' => false, 'auxBox' => false];
     $this->assertSame($expected, $this->builder->templatePreferences);
   }
+
+  /**
+   * @test
+   */
+  public function render()
+  {
+    $_SERVER['SERVER_NAME'] = 'Test';
+    $properties = [
+      'localNavigation' => 'localNavHere',
+      'subTitle'        => 'subTitleHere',
+      'head'            => 'headHere',
+      'stylesheets'     => 'stylesheetsHere',
+      'javascripts'     => 'jsHere',
+      'title'           => 'titleHere',
+      'content'         => 'contentHere',
+      'focusBox'        => 'focusBoxHere',
+    ];
+
+    $builder = new Builder($properties);
+
+    $result = $builder->render();
+
+    foreach ($properties as $prop => $value) {
+      $this->assertContains($value, $result);
+    }
+  }
 }

@@ -519,18 +519,14 @@ class Builder
         }
     );
 
-    $bodyContent = TwigFactory::renderTwigFilesystemTemplate(__DIR__ . '/views/templateBody.html.twig', array(
-        'title'           => $this->getTitle(),
-        'subtitle'        => $this->getSubtitle(),
-        'pageContent'     => $this->getContent(),
-        'localNavigation' => $this->renderLocalNavigation(),
-        'focusBox'        => $this->getFocusBox(),
-        'stylesheets'     => $this->getStylesheets(),
-        'head'            => $this->getHead(),
-        'javascripts'     => $this->getJavascripts(),
-      )
-    );
+    $templatePreferences['Title']           = $this->getTitle();
+    $templatePreferences['Subtitle']        = $this->getSubtitle();
+    $templatePreferences['Content']         = $this->getContent();
+    $templatePreferences['LocalNavigation'] = $this->renderLocalNavigation();
+    $templatePreferences['FocusBox']        = $this->getFocusBox();
+    $templatePreferences['Head']            = $this->getStylesheets() . $this->getHead();
+    $templatePreferences['JavaScript']      = $this->getJavascripts();
 
-    return TemplatePageRequest::end(null, $bodyContent);
+    return TemplatePageRequest::end(null, '');
   }
 }
