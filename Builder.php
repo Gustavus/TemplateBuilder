@@ -519,13 +519,23 @@ class Builder
         }
     );
 
-    $templatePreferences['Title']           = $this->getTitle();
-    $templatePreferences['Subtitle']        = $this->getSubtitle();
-    $templatePreferences['Content']         = $this->getContent();
-    $templatePreferences['LocalNavigation'] = $this->renderLocalNavigation();
-    $templatePreferences['FocusBox']        = $this->getFocusBox();
-    $templatePreferences['Head']            = $this->getStylesheets() . $this->getHead();
-    $templatePreferences['JavaScript']      = $this->getJavascripts();
+    $sections = [
+      'Title'           => $this->getTitle(),
+      'Subtitle'        => $this->getSubtitle(),
+      'Content'         => $this->getContent(),
+      'LocalNavigation' => $this->renderLocalNavigation(),
+      'FocusBox'        => $this->getFocusBox(),
+      'Head'            => $this->getStylesheets() . $this->getHead(),
+      'JavaScript'      => $this->getJavascripts(),
+    ];
+
+    if (Filters::exists('concertCMSCheckEditable')) {
+      foreach ($sections as $section => &$value) {
+        $value = Filters::apply('concertCMSCheckEditable', $value, $section);
+      }
+    }
+
+    $templatePreferences = array_merge($templatePreferences, $sections);
 
     return TemplatePageRequest::end(null, '');
   }
