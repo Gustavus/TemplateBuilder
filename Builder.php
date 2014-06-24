@@ -20,7 +20,10 @@ use TemplatePageRequest,
   Gustavus\TwigFactory\TwigFactory,
   Gustavus\LocalNavigation\ItemFactory,
   Gustavus\Utility\File,
-  Gustavus\Extensibility\Filters;
+  Gustavus\Extensibility\Filters,
+  Gustavus\Concert\PermissionsManager as ConcertPermissions,
+  Gustavus\Concert\Controllers\MainController as ConcertController,
+  Gustavus\Gatekeeper\Gatekeeper;
 
 /**
  * Class to build the template
@@ -501,6 +504,23 @@ class Builder
    */
   public function render()
   {
+    if (Gatekeeper::isLoggedIn()) {
+      // check to see if the user has access to edit this page
+      if (ConcertPermissions::userCanEditFile(Gatekeeper::getUsername(), $_SERVER['SCRIPT_NAME']) && (!isset($_GET['concert']) || $_GET['concert'] !== 'editing')) {
+        if ((isset($_GET['concert']) && $_GET['concert'] === 'edit') || (isset($_POST['concertAction']) && $_POST['concertAction'] === 'save')) {
+          $_GET['concert'] = 'editing';
+          Filters::add('userBox', function($content) {
+            // @todo make this remove concert stuff from the url
+            return $content . '<a href="?concert=stopedit" class="button red concertEditPage">Stop Editing</a>';
+          });
+          return (new ConcertController())->edit($_SERVER['SCRIPT_NAME']);
+        }
+        Filters::add('userBox', function($content) {
+          return $content . '<a href="?concert=edit" class="button red concertEditPage">Edit Page</a>';
+        });
+      }
+    }
+
     $this->setUpBreadCrumbs();
     // Set up template preferences
     global $templatePreferences;
