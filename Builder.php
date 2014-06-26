@@ -21,9 +21,9 @@ use TemplatePageRequest,
   Gustavus\LocalNavigation\ItemFactory,
   Gustavus\Utility\File,
   Gustavus\Extensibility\Filters,
-  Gustavus\Concert\PermissionsManager as ConcertPermissions,
   Gustavus\Concert\Controllers\MainController as ConcertController,
-  Gustavus\Gatekeeper\Gatekeeper;
+  Gustavus\Gatekeeper\Gatekeeper,
+  Template\PageActions;
 
 /**
  * Class to build the template
@@ -98,6 +98,12 @@ class Builder
    * @var array
    */
   private $templatePreferences = ['localNavigation' => true, 'auxBox' => false];
+
+  /**
+   * Flag to specify if we have initialized or not yet
+   * @var boolean
+   */
+  private static $initialized = false;
 
   /**
    * Constructs the object with the args specified
@@ -498,28 +504,35 @@ class Builder
   }
 
   /**
+   * Sets up anything that needs to happen right away such as logging in or impersonation requests.
+   *
+   * @return void
+   */
+  public static function init()
+  {
+    if (!self::$initialized) {
+      // Handle users logging in/out and requesting impersonation.
+      PageActions::handleActions();
+      self::$initialized = true;
+    }
+  }
+
+  /**
    * Renders a page wrapped in the Gustavus template.
    *
    * @return string
    */
   public function render()
   {
-    if (Gatekeeper::isLoggedIn()) {
-      // check to see if the user has access to edit this page
-      if (ConcertPermissions::userCanEditFile(Gatekeeper::getUsername(), $_SERVER['SCRIPT_NAME']) && (!isset($_GET['concert']) || $_GET['concert'] !== 'editing')) {
-        if ((isset($_GET['concert']) && $_GET['concert'] === 'edit') || (isset($_POST['concertAction']) && $_POST['concertAction'] === 'save')) {
-          $_GET['concert'] = 'editing';
-          Filters::add('userBox', function($content) {
-            // @todo make this remove concert stuff from the url
-            return $content . '<a href="?concert=stopedit" class="button red concertEditPage">Stop Editing</a>';
-          });
-          return (new ConcertController())->edit($_SERVER['SCRIPT_NAME']);
-        }
-        Filters::add('userBox', function($content) {
-          return $content . '<a href="?concert=edit" class="button red concertEditPage">Edit Page</a>';
-        });
-      }
-    }
+    self::init();
+
+    // check to see if the user can access concert.
+    $concertActions = (new ConcertController)->mosh();
+
+    if (isset($concertActions['action'], $concertActions['value']) && $concertActions['action'] === 'return') {
+      return $concertActions['value'];
+    } // else: no action was needed.
+
 
     $this->setUpBreadCrumbs();
     // Set up template preferences
