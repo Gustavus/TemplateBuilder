@@ -526,13 +526,14 @@ class Builder
   {
     self::init();
 
-    // check to see if the user can access concert.
-    $concertActions = (new ConcertController)->mosh();
+    if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
+      // check to see if the user can access concert.
+      $concertActions = (new ConcertController)->mosh($_SERVER['SCRIPT_FILENAME']);
 
-    if (isset($concertActions['action'], $concertActions['value']) && $concertActions['action'] === 'return') {
-      return $concertActions['value'];
-    } // else: no action was needed.
-
+      if (isset($concertActions['action'], $concertActions['value']) && $concertActions['action'] === 'return') {
+        return $concertActions['value'];
+      } // else: no action was needed.
+    }
 
     $this->setUpBreadCrumbs();
     // Set up template preferences
