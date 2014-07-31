@@ -22,7 +22,6 @@ use TemplatePageRequest,
   Gustavus\Utility\File,
   Gustavus\Extensibility\Filters,
   Gustavus\Concert\Controllers\MainController as ConcertController,
-  Gustavus\Gatekeeper\Gatekeeper,
   Template\PageActions;
 
 /**
