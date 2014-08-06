@@ -20,7 +20,9 @@ use TemplatePageRequest,
   Gustavus\TwigFactory\TwigFactory,
   Gustavus\LocalNavigation\ItemFactory,
   Gustavus\Utility\File,
-  Gustavus\Extensibility\Filters;
+  Gustavus\Extensibility\Filters,
+  Gustavus\Concert\Controllers\MainController as ConcertController,
+  Template\PageActions;
 
 /**
  * Class to build the template
@@ -95,6 +97,12 @@ class Builder
    * @var array
    */
   private $templatePreferences = ['localNavigation' => true, 'auxBox' => false];
+
+  /**
+   * Flag to specify if we have initialized or not yet
+   * @var boolean
+   */
+  private static $initialized = false;
 
   /**
    * Constructs the object with the args specified
@@ -495,12 +503,37 @@ class Builder
   }
 
   /**
+   * Sets up anything that needs to happen right away such as logging in or impersonation requests.
+   *
+   * @return void
+   */
+  public static function init()
+  {
+    if (!self::$initialized) {
+      // Handle users logging in/out and requesting impersonation.
+      PageActions::handleActions();
+      self::$initialized = true;
+    }
+  }
+
+  /**
    * Renders a page wrapped in the Gustavus template.
    *
    * @return string
    */
   public function render()
   {
+    self::init();
+
+    if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
+      // check to see if the user can access concert.
+      $concertActions = (new ConcertController)->mosh($_SERVER['SCRIPT_FILENAME']);
+
+      if (isset($concertActions['action'], $concertActions['value']) && $concertActions['action'] === 'return') {
+        return $concertActions['value'];
+      } // else: no action was needed.
+    }
+
     $this->setUpBreadCrumbs();
     // Set up template preferences
     global $templatePreferences;
