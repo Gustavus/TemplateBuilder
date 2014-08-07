@@ -537,7 +537,11 @@ class Builder
     $this->setUpBreadCrumbs();
     // Set up template preferences
     global $templatePreferences;
-    $templatePreferences = $this->templatePreferences;
+    // we don't want to over-write any already set preferences before we render.
+    if (!is_array($templatePreferences)) {
+      $templatePreferences = [];
+    }
+    $templatePreferences = array_merge($templatePreferences, $this->templatePreferences);
 
     Filters::add('messages',
         function($content)
