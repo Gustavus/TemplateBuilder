@@ -557,13 +557,13 @@ class Builder
     );
 
     $sections = [
-      'Title'           => $this->getTitle(),
-      'Subtitle'        => $this->getSubtitle(),
-      'Content'         => $this->getContent(),
-      'LocalNavigation' => $this->renderLocalNavigation(),
-      'FocusBox'        => $this->getFocusBox(),
-      'Head'            => $this->getStylesheets() . $this->getHead(),
-      'JavaScript'      => $this->getJavascripts(),
+      'Title'           => trim($this->getTitle()),
+      'Subtitle'        => trim($this->getSubtitle()),
+      'Content'         => trim($this->getContent()),
+      'LocalNavigation' => trim($this->renderLocalNavigation()),
+      'FocusBox'        => trim($this->getFocusBox()),
+      'Head'            => trim($this->getStylesheets() . $this->getHead()),
+      'JavaScript'      => trim($this->getJavascripts()),
     ];
 
     if (Filters::exists('concertCMSCheckEditable')) {
