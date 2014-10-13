@@ -526,8 +526,14 @@ class Builder
     self::init();
 
     if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
+      $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
+      if (isset($parsedUrl['path'])) {
+        $requestedFile = $parsedUrl['path'];
+      } else {
+        $requestedFile = $_SERVER['SCRIPT_FILENAME'];
+      }
       // check to see if the user can access concert.
-      $concertActions = (new ConcertController)->mosh($_SERVER['SCRIPT_FILENAME']);
+      $concertActions = (new ConcertController)->mosh($requestedFile);
 
       if (isset($concertActions['action'], $concertActions['value']) && $concertActions['action'] === 'return') {
         return $concertActions['value'];
