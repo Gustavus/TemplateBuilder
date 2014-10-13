@@ -526,10 +526,16 @@ class Builder
     self::init();
 
     if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
-      $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
-      if (isset($parsedUrl['path'])) {
-        $requestedFile = $parsedUrl['path'];
-      } else {
+      if (isset($_SERVER['REQUEST_URI'])) {
+        // we want to get the current page from REQUEST_URI
+        $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
+        if (isset($parsedUrl['path'])) {
+          $requestedFile = $parsedUrl['path'];
+        }
+      }
+
+      if (!isset($requestedFile)) {
+        // fallback to SCRIPT_FILENAME
         $requestedFile = $_SERVER['SCRIPT_FILENAME'];
       }
       // check to see if the user can access concert.
