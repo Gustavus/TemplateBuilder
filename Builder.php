@@ -94,15 +94,31 @@ class Builder
 
   /**
    * Preferences to set in the template
+   *
    * @var array
    */
   private $templatePreferences = ['localNavigation' => true, 'auxBox' => false];
 
   /**
    * Flag to specify if we have initialized or not yet
+   *
    * @var boolean
    */
   private static $initialized = false;
+
+  /**
+   * Flag to specify if we should store the current builder object instead of returning the template.
+   *
+   * @var boolean
+   */
+  private static $storeObjectInsteadOfRender = false;
+
+  /**
+   * Stored builder object. Will be populated if $storeObjectInsteadOfRender is true.
+   *
+   * @var Builder
+   */
+  private static $storedBuilder = null;
 
   /**
    * Constructs the object with the args specified
@@ -145,11 +161,36 @@ class Builder
   }
 
   /**
+   * Sets whether or not we should store the object or return the template when render is called
+   *
+   * @param boolean $value
+   * @return  void
+   */
+  public static function setShouldStoreObjectInsteadOfRender($value = true)
+  {
+    self::$storeObjectInsteadOfRender = $value;
+  }
+
+  /**
+   * Gets the stored builder object that was stored instead of rendered
+   *
+   * @param boolean $resetToRender Whether to reset to rendering the template or not.
+   * @return  Builder Stored builder object
+   */
+  public static function getStoredBuilder($resetToRender = true)
+  {
+    if ($resetToRender) {
+      self::$storeObjectInsteadOfRender = false;
+    }
+    return self::$storedBuilder;
+  }
+
+  /**
    * Gets the title that is set for the page.
    *
    * @return string the page title.
    */
-  private function getTitle()
+  public function getTitle()
   {
     return $this->title;
   }
@@ -171,7 +212,7 @@ class Builder
    *
    * @return string the page subtitle
    */
-  private function getSubtitle()
+  public function getSubtitle()
   {
     return $this->subtitle;
   }
@@ -193,7 +234,7 @@ class Builder
    *
    * @return string the HTML in the page focusbox
    */
-  private function getFocusBox()
+  public function getFocusBox()
   {
     return $this->focusBox;
   }
@@ -215,7 +256,7 @@ class Builder
    *
    * @return string the stylesheets HTML on the page
    */
-  private function getStylesheets()
+  public function getStylesheets()
   {
     return $this->stylesheets;
   }
@@ -237,7 +278,7 @@ class Builder
    *
    * @return string the head HTML on the page
    */
-  private function getHead()
+  public function getHead()
   {
     return $this->head;
   }
@@ -259,7 +300,7 @@ class Builder
    *
    * @return string the javascript content on the page
    */
-  private function getJavascripts()
+  public function getJavascripts()
   {
     return $this->javascripts;
   }
@@ -281,7 +322,7 @@ class Builder
    *
    * @return array localNavigation
    */
-  private function getLocalNavigation()
+  public function getLocalNavigation()
   {
     return $this->localNavigation;
   }
@@ -331,7 +372,7 @@ class Builder
    *
    * @return string the content on the page
    */
-  private function getContent()
+  public function getContent()
   {
     if (ob_get_level()) {
       // this either means that a warning, a notice, or any other output was thrown to the output buffer. Lets throw it above the content so we don't lose it.
@@ -366,7 +407,7 @@ class Builder
    *
    * @return string the messages on the page
    */
-  private function getMessages()
+  public function getMessages()
   {
     return $this->messages;
   }
@@ -388,7 +429,7 @@ class Builder
    *
    * @return string the banners on the page
    */
-  private function getBanners()
+  public function getBanners()
   {
     return $this->banners;
   }
@@ -410,7 +451,7 @@ class Builder
    *
    * @return array the breadCrumbs on the page
    */
-  private function getBreadCrumbs()
+  public function getBreadCrumbs()
   {
     return $this->breadCrumbs;
   }
@@ -523,6 +564,10 @@ class Builder
    */
   public function render()
   {
+    if (self::$storeObjectInsteadOfRender) {
+      self::$storedBuilder = $this;
+      return;
+    }
     self::init();
 
     if (class_exists('\Gustavus\Concert\Controllers\MainController')) {

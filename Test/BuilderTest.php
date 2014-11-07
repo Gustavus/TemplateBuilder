@@ -213,4 +213,84 @@ class BuilderTest extends Test
       $this->assertContains($value, $result);
     }
   }
+
+  /**
+   * @test
+   */
+  public function renderStoreBuilder()
+  {
+    $_SERVER['SERVER_NAME'] = 'Test';
+    $properties = [
+      'localNavigation' => 'localNavHere',
+      'subTitle'        => 'subTitleHere',
+      'head'            => 'headHere',
+      'stylesheets'     => 'stylesheetsHere',
+      'javascripts'     => 'jsHere',
+      'title'           => 'titleHere',
+      'content'         => 'contentHere',
+      'focusBox'        => 'focusBoxHere',
+    ];
+
+    $builder = new Builder($properties);
+
+    Builder::setShouldStoreObjectInsteadOfRender();
+
+    $result = $builder->render();
+    $this->assertNull($result);
+
+    $storedBuilder = Builder::getStoredBuilder();
+
+    foreach ($properties as $prop => $value) {
+      $getter = 'get' . ucfirst($prop);
+      $this->assertSame($value, $storedBuilder->{$getter}());
+    }
+
+    $result = $builder->render();
+
+    foreach ($properties as $prop => $value) {
+      $this->assertContains($value, $result);
+    }
+  }
+
+  /**
+   * @test
+   */
+  public function renderStoreBuilderNoReset()
+  {
+    $_SERVER['SERVER_NAME'] = 'Test';
+    $properties = [
+      'localNavigation' => 'localNavHere',
+      'subTitle'        => 'subTitleHere',
+      'head'            => 'headHere',
+      'stylesheets'     => 'stylesheetsHere',
+      'javascripts'     => 'jsHere',
+      'title'           => 'titleHere',
+      'content'         => 'contentHere',
+      'focusBox'        => 'focusBoxHere',
+    ];
+
+    $builder = new Builder($properties);
+
+    Builder::setShouldStoreObjectInsteadOfRender();
+
+    $result = $builder->render();
+    $this->assertNull($result);
+
+    $storedBuilder = Builder::getStoredBuilder(false);
+
+    foreach ($properties as $prop => $value) {
+      $getter = 'get' . ucfirst($prop);
+      $this->assertSame($value, $storedBuilder->{$getter}());
+    }
+
+    $result = $builder->render();
+    $this->assertNull($result);
+
+    Builder::setShouldStoreObjectInsteadOfRender(false);
+    $result = $builder->render();
+
+    foreach ($properties as $prop => $value) {
+      $this->assertContains($value, $result);
+    }
+  }
 }
