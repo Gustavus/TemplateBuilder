@@ -137,7 +137,7 @@ class Builder
    *   <li>breadCrumbAdditions = {array} Array of arrays of additional bread crumbs to add.</li>
    *   <li>messages = {string} Messsages to add to the bottom message of the page.</li>
    *   <li>banners = {string} HTML to add to the banners portion of the template</li>
-   *   <li>templatePreferences = {array} Array of preferences to append to our default preferences</li>
+   *   <li>templatePreferences = {array} Array of preferences to append to our default preferences. <a href="https://beta.gac.edu/docs/php/class-TemplateBase.html#$preferences">Template Properties</a></li>
    * </ul>
    *
    * @param array $args keyed by page part
