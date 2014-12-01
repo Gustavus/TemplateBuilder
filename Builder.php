@@ -550,26 +550,15 @@ class Builder
    */
   public static function init()
   {
-    if (!self::$initialized) {
-      // Handle users logging in/out and requesting impersonation.
-      PageActions::handleActions();
-      self::$initialized = true;
-    }
-  }
-
-  /**
-   * Renders a page wrapped in the Gustavus template.
-   *
-   * @return string
-   */
-  public function render()
-  {
-    if (self::$storeObjectInsteadOfRender) {
-      self::$storedBuilder = $this;
+    if (self::$initialized) {
+      // we have already been initialized
       return;
     }
-    self::init();
+    // Handle users logging in/out and requesting impersonation.
+    PageActions::handleActions();
+    self::$initialized = true;
 
+    // now check if the user is trying to do anything in Concert.
     if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
       if (isset($_SERVER['REQUEST_URI'])) {
         // we want to get the current page from REQUEST_URI
@@ -587,9 +576,24 @@ class Builder
       $concertActions = (new ConcertController)->mosh($requestedFile);
 
       if (isset($concertActions['action'], $concertActions['value']) && $concertActions['action'] === 'return') {
-        return $concertActions['value'];
+        echo $concertActions['value'];
+        exit;
       } // else: no action was needed.
     }
+  }
+
+  /**
+   * Renders a page wrapped in the Gustavus template.
+   *
+   * @return string
+   */
+  public function render()
+  {
+    if (self::$storeObjectInsteadOfRender) {
+      self::$storedBuilder = $this;
+      return;
+    }
+    self::init();
 
     $this->setUpBreadCrumbs();
     // Set up template preferences
