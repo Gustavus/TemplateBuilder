@@ -502,7 +502,7 @@ class Builder
           $crumb['text']
       );
     }
-    return (!empty($builtCrumbs)) ? implode(' / ', $builtCrumbs) . ' / ' : '';
+    return (!empty($builtCrumbs)) ? implode('', $builtCrumbs): '';
   }
 
   /**
