@@ -172,7 +172,7 @@ class BuilderTest extends Test
     $crumbs = [['url' => 'some url', 'text' => 'some text']];
     $this->builder->setBreadCrumbAdditions($crumbs);
 
-    $this->assertSame('<a href="some url">some text</a> / ', $this->builder->buildBreadCrumbAdditions());
+    $this->assertSame('<a href="some url">some text</a>', $this->builder->buildBreadCrumbAdditions());
   }
 
   /**

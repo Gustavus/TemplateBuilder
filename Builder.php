@@ -5,24 +5,20 @@
  */
 namespace Gustavus\TemplateBuilder;
 
-if (!defined('GUSTAVUS_START_TEMPLATE')) {
-  // we don't want to template to start.
-  // including template/request.class.php starts extreme maintenance mode and debugging right away
-  define('GUSTAVUS_START_TEMPLATE', false);
-}
-
-require_once 'template/request.class.php';
 //Gatekeeper needs to be included after the request class
 //because the request class sets a constant that gatekeeper needs.
 require_once 'gatekeeper/gatekeeper.class.php';
 
-use TemplatePageRequest,
-  Gustavus\TwigFactory\TwigFactory,
+use Gustavus\TwigFactory\TwigFactory,
   Gustavus\LocalNavigation\ItemFactory,
   Gustavus\Utility\File,
   Gustavus\Extensibility\Filters,
   Gustavus\Concert\Controllers\MainController as ConcertController,
-  Template\PageActions;
+  Gustavus\Template\PageActions,
+  Gustavus\Template\Request as TemplateRequest;
+
+// start extreme maintenance and debugging if needed
+TemplateRequest::init();
 
 /**
  * Class to build the template
@@ -506,7 +502,7 @@ class Builder
           $crumb['text']
       );
     }
-    return (!empty($builtCrumbs)) ? implode(' / ', $builtCrumbs) . ' / ' : '';
+    return (!empty($builtCrumbs)) ? implode('', $builtCrumbs): '';
   }
 
   /**
@@ -635,6 +631,6 @@ class Builder
 
     $templatePreferences = array_merge($templatePreferences, $sections);
 
-    return TemplatePageRequest::end(null, '');
+    return TemplateRequest::end(null, '');
   }
 }
