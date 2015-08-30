@@ -12,6 +12,7 @@ require_once 'gatekeeper/gatekeeper.class.php';
 use Gustavus\TwigFactory\TwigFactory,
   Gustavus\LocalNavigation\ItemFactory,
   Gustavus\Utility\File,
+  Gustavus\Utility\Set,
   Gustavus\Extensibility\Filters,
   Gustavus\Concert\Controllers\MainController as ConcertController,
   Gustavus\Template\PageActions,
@@ -598,7 +599,7 @@ class Builder
     if (!is_array($templatePreferences)) {
       $templatePreferences = [];
     }
-    $templatePreferences = array_merge($templatePreferences, $this->templatePreferences);
+    $templatePreferences = Set::recursivelyMergeArrays($templatePreferences, $this->templatePreferences);
 
     Filters::add('messages',
         function($content)
@@ -613,7 +614,7 @@ class Builder
         }
     );
 
-    $sections = [
+    $sections = array_filter([
       'Title'           => trim($this->getTitle()),
       'Subtitle'        => trim($this->getSubtitle()),
       'Content'         => trim($this->getContent()),
@@ -621,15 +622,14 @@ class Builder
       'FocusBox'        => trim($this->getFocusBox()),
       'Head'            => trim($this->getStylesheets() . $this->getHead()),
       'JavaScript'      => trim($this->getJavascripts()),
-    ];
+    ]);
 
     if (Filters::exists('concertCMSCheckEditable')) {
       foreach ($sections as $section => &$value) {
         $value = Filters::apply('concertCMSCheckEditable', $value, $section);
       }
     }
-
-    $templatePreferences = array_merge($templatePreferences, $sections);
+    $templatePreferences = Set::recursivelyMergeArrays($templatePreferences, $sections);
 
     return TemplateRequest::end(null, '');
   }
