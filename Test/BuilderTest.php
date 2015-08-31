@@ -293,4 +293,57 @@ class BuilderTest extends Test
       $this->assertContains($value, $result);
     }
   }
+
+  /**
+   * @test
+   */
+  public function renderWithTempPrefs()
+  {
+    $_SERVER['SERVER_NAME'] = 'Test';
+    $properties = [
+      'localNavigation' => 'localNavHere',
+      'subTitle'        => 'subTitleHere',
+      'head'            => 'headHere',
+      'stylesheets'     => 'stylesheetsHere',
+      'javascripts'     => 'jsHere',
+      'title'           => 'titleHere',
+      'content'         => 'contentHere',
+      'focusBox'        => 'focusBoxHere',
+    ];
+
+    $builder = new Builder($properties);
+
+    global $templatePreferences;
+    $templatePreferences['Title'] = 'my title!';
+    $result = $builder->render();
+
+    $this->assertNotContains('titleHere', $result);
+    $this->assertContains('my title!', $result);
+  }
+
+  /**
+   * @test
+   */
+  public function renderWithTempPrefsEmptyPref()
+  {
+    $_SERVER['SERVER_NAME'] = 'Test';
+    $properties = [
+      'localNavigation' => 'localNavHere',
+      'subTitle'        => 'subTitleHere',
+      'head'            => 'headHere',
+      'stylesheets'     => 'stylesheetsHere',
+      'javascripts'     => 'jsHere',
+      'title'           => 'titleHere',
+      'content'         => 'contentHere',
+      'focusBox'        => 'focusBoxHere',
+    ];
+
+    $builder = new Builder($properties);
+
+    global $templatePreferences;
+    $templatePreferences['Title'] = '';
+    $result = $builder->render();
+
+    $this->assertNotContains('titleHere', $result);
+  }
 }
