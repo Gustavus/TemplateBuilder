@@ -614,7 +614,7 @@ class Builder
         }
     );
 
-    $sections = array_filter([
+    $sections = [
       'Title'           => trim($this->getTitle()),
       'Subtitle'        => trim($this->getSubtitle()),
       'Content'         => trim($this->getContent()),
@@ -622,14 +622,15 @@ class Builder
       'FocusBox'        => trim($this->getFocusBox()),
       'Head'            => trim($this->getStylesheets() . $this->getHead()),
       'JavaScript'      => trim($this->getJavascripts()),
-    ]);
+    ];
 
     if (Filters::exists('concertCMSCheckEditable')) {
       foreach ($sections as $section => &$value) {
         $value = Filters::apply('concertCMSCheckEditable', $value, $section);
       }
     }
-    $templatePreferences = Set::recursivelyMergeArrays($templatePreferences, $sections);
+    // we want any current template preferences to overwrite our sections
+    $templatePreferences = Set::recursivelyMergeArrays($sections, $templatePreferences);
 
     return TemplateRequest::end(null, '');
   }
