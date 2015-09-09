@@ -557,17 +557,15 @@ class Builder
 
     // now check if the user is trying to do anything in Concert.
     if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
-      if (isset($_SERVER['REQUEST_URI'])) {
-        // we want to get the current page from REQUEST_URI
+      $requestedFile = $_SERVER['SCRIPT_FILENAME'];
+
+      if (empty($requestedFile) && isset($_SERVER['REQUEST_URI'])) {
+        // fallback to REQUEST_URI
+        // Note: This should not happen. SCRIPT_FILENAME should always contain something, but just in case.
         $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
         if (isset($parsedUrl['path'])) {
           $requestedFile = $parsedUrl['path'];
         }
-      }
-
-      if (!isset($requestedFile)) {
-        // fallback to SCRIPT_FILENAME
-        $requestedFile = $_SERVER['SCRIPT_FILENAME'];
       }
       // check to see if the user can access concert.
       $concertActions = (new ConcertController)->mosh($requestedFile);
