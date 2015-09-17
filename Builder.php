@@ -97,6 +97,14 @@ class Builder
   private $templatePreferences = ['localNavigation' => true, 'auxBox' => false];
 
   /**
+   * Page url of the current page being rendered
+   *   Usually only set if using the template getter
+   *
+   * @var string
+   */
+  private $pageURL;
+
+  /**
    * Flag to specify if we have initialized or not yet
    *
    * @var boolean
@@ -135,6 +143,7 @@ class Builder
    *   <li>messages = {string} Messsages to add to the bottom message of the page.</li>
    *   <li>banners = {string} HTML to add to the banners portion of the template</li>
    *   <li>templatePreferences = {array} Array of preferences to append to our default preferences. <a href="https://beta.gac.edu/docs/php/class-TemplateBase.html#$preferences">Template Properties</a></li>
+   *   <li>pageURL = {string} URL of the page being rendered</li>
    * </ul>
    *
    * @param array $args keyed by page part
@@ -155,6 +164,11 @@ class Builder
         $this->$function($value);
       }
     }
+  }
+
+  public function setPageURL($url)
+  {
+    $this->pageURL = $url;
   }
 
   /**
@@ -543,9 +557,10 @@ class Builder
   /**
    * Sets up anything that needs to happen right away such as logging in or impersonation requests.
    *
+   * @param  string $pageURL Url of the page we are accessing (Might be set if using the template getter)
    * @return void
    */
-  public static function init()
+  public static function init($pageURL = null)
   {
     if (self::$initialized) {
       // we have already been initialized
@@ -557,7 +572,11 @@ class Builder
 
     // now check if the user is trying to do anything in Concert.
     if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
-      $requestedFile = $_SERVER['SCRIPT_FILENAME'];
+      if (!empty($pageURL)) {
+        $requestedFile = $pageURL;
+      } else {
+        $requestedFile = $_SERVER['SCRIPT_FILENAME'];
+      }
 
       if (empty($requestedFile) && isset($_SERVER['REQUEST_URI'])) {
         // fallback to REQUEST_URI
@@ -588,7 +607,7 @@ class Builder
       self::$storedBuilder = $this;
       return;
     }
-    self::init();
+    self::init($this->pageURL);
 
     $this->setUpBreadCrumbs();
     // Set up template preferences
