@@ -543,9 +543,10 @@ class Builder
   /**
    * Sets up anything that needs to happen right away such as logging in or impersonation requests.
    *
+   * @param  boolean $runConcert Whether to attempt to use Concert for this request or not
    * @return void
    */
-  public static function init()
+  public static function init($runConcert = true)
   {
     if (self::$initialized) {
       // we have already been initialized
@@ -556,7 +557,7 @@ class Builder
     self::$initialized = true;
 
     // now check if the user is trying to do anything in Concert.
-    if (class_exists('\Gustavus\Concert\Controllers\MainController')) {
+    if ($runConcert && class_exists('\Gustavus\Concert\Controllers\MainController')) {
       $requestedFile = $_SERVER['SCRIPT_FILENAME'];
 
       if (empty($requestedFile) && isset($_SERVER['REQUEST_URI'])) {
